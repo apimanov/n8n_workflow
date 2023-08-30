@@ -1,0 +1,313 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e44036a0-c14f-4e2b-9a30-488ad1f95619",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://xmlcalendar.ru/data/ru/2023/calendar.csv",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "043f74d8-9e56-4286-829e-a03e0b018e41",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        260,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {
+          "readAsString": true
+        }
+      },
+      "id": "afb8d522-f73f-4b00-8768-11cf7d60d53d",
+      "name": "Spreadsheet File",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "typeVersion": 1,
+      "position": [
+        500,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://xmlcalendar.ru/data/ru/2023/calendar.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "094a294e-d4f7-4564-a9af-24e84c442138",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        280,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "[\"Год/Месяц\"]",
+              "field2": "[\"Год/Месяц\"]"
+            }
+          ]
+        },
+        "options": {
+          "skipFields": "",
+          "disableDotNotation": false,
+          "multipleMatches": "first"
+        }
+      },
+      "id": "bb252c09-edca-4c32-8c69-a63ba6dc55f9",
+      "name": "Compare Datasets",
+      "type": "n8n-nodes-base.compareDatasets",
+      "typeVersion": 2.3,
+      "position": [
+        780,
+        280
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": false,
+      "notesInFlow": true,
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "number": [
+            {
+              "name": "Год/Месяц",
+              "value": "={{ $json.year }}"
+            },
+            {
+              "name": "Всего рабочих дней",
+              "value": "={{ $json.statistic.workdays }}"
+            },
+            {
+              "name": "Всего праздничных и выходных дней",
+              "value": "={{ $json.statistic.holidays }}"
+            },
+            {
+              "name": "Количество рабочих часов при 40-часовой рабочей неделе",
+              "value": "={{ $json.statistic.hours40 }}"
+            },
+            {
+              "name": "Количество рабочих часов при 36-часовой рабочей неделе",
+              "value": "={{ $json.statistic.hours36 }}"
+            },
+            {
+              "name": "Количество рабочих часов при 24-часовой рабочей неделе",
+              "value": "={{ $json.statistic.hours24 }}"
+            }
+          ],
+          "string": [
+            {
+              "name": "Январь",
+              "value": "={{ $json.months[0].days }}"
+            },
+            {
+              "name": "Февраль",
+              "value": "={{ $json.months[1].days }}"
+            },
+            {
+              "name": "Март",
+              "value": "={{ $json.months[2].days }}"
+            },
+            {
+              "name": "Апрель",
+              "value": "={{ $json.months[3].days }}"
+            },
+            {
+              "name": "Май",
+              "value": "={{ $json.months[4].days }}"
+            },
+            {
+              "name": "Июнь",
+              "value": "={{ $json.months[5].days }}"
+            },
+            {
+              "name": "Июль",
+              "value": "={{ $json.months[6].days }}"
+            },
+            {
+              "name": "Август",
+              "value": "={{ $json.months[7].days }}"
+            },
+            {
+              "name": "Сентябрь",
+              "value": "={{ $json.months[8].days }}"
+            },
+            {
+              "name": "Октябрь",
+              "value": "={{ $json.months[9].days }}"
+            },
+            {
+              "name": "Ноябрь",
+              "value": "={{ $json.months[10].days }}"
+            },
+            {
+              "name": "Декабрь",
+              "value": "={{ $json.months[11].days }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "id": "716eee8b-3ee2-4e18-81e8-097dc87d849e",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        520,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "command": "echo \"has no any diffrence\""
+      },
+      "id": "582ad799-a88c-479e-8eab-a64ecfdb7242",
+      "name": "equal",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        980,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "command": "echo \"has a diffrence\""
+      },
+      "id": "ac03cd7a-5eb9-4060-963e-282fb3498840",
+      "name": "non euqal",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        980,
+        480
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Spreadsheet File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spreadsheet File": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Datasets": {
+      "main": [
+        [],
+        [
+          {
+            "node": "equal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "non euqal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bb55af8a-a394-4fb6-89aa-7dac02701ba8",
+  "id": "aIIxakjkzSy8M3iT",
+  "meta": {
+    "instanceId": "06e9c414e7601619cfb28dd055eb2a5583a195838e650d2783b81d5c080a9165"
+  },
+  "tags": []
+}
