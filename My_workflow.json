@@ -3,13 +3,13 @@
   "nodes": [
     {
       "parameters": {},
-      "id": "e44036a0-c14f-4e2b-9a30-488ad1f95619",
+      "id": "24af63c8-49ec-428a-ac6a-01b48a2d4705",
       "name": "When clicking \"Execute Workflow\"",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        100,
-        300
+        300,
+        660
       ]
     },
     {
@@ -23,13 +23,13 @@
           }
         }
       },
-      "id": "043f74d8-9e56-4286-829e-a03e0b018e41",
+      "id": "ceebeb01-4abe-4a1f-9c9f-b9990bcf20df",
       "name": "HTTP Request",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        260,
-        100
+        460,
+        460
       ]
     },
     {
@@ -39,13 +39,13 @@
           "readAsString": true
         }
       },
-      "id": "afb8d522-f73f-4b00-8768-11cf7d60d53d",
+      "id": "749acbf3-9f66-4be5-b404-bbaabdc9abd9",
       "name": "Spreadsheet File",
       "type": "n8n-nodes-base.spreadsheetFile",
       "typeVersion": 1,
       "position": [
-        500,
-        140
+        640,
+        460
       ]
     },
     {
@@ -59,43 +59,14 @@
           }
         }
       },
-      "id": "094a294e-d4f7-4564-a9af-24e84c442138",
+      "id": "f80a943f-7a43-497b-bb10-10577206f7f6",
       "name": "HTTP Request1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        280,
-        480
+        480,
+        840
       ]
-    },
-    {
-      "parameters": {
-        "mergeByFields": {
-          "values": [
-            {
-              "field1": "[\"Год/Месяц\"]",
-              "field2": "[\"Год/Месяц\"]"
-            }
-          ]
-        },
-        "options": {
-          "skipFields": "",
-          "disableDotNotation": false,
-          "multipleMatches": "first"
-        }
-      },
-      "id": "bb252c09-edca-4c32-8c69-a63ba6dc55f9",
-      "name": "Compare Datasets",
-      "type": "n8n-nodes-base.compareDatasets",
-      "typeVersion": 2.3,
-      "position": [
-        780,
-        280
-      ],
-      "retryOnFail": true,
-      "alwaysOutputData": false,
-      "notesInFlow": true,
-      "continueOnFail": true
     },
     {
       "parameters": {
@@ -182,39 +153,95 @@
           "dotNotation": true
         }
       },
-      "id": "716eee8b-3ee2-4e18-81e8-097dc87d849e",
+      "id": "189c3937-05db-4c46-9b3e-bd9e98fc9d48",
       "name": "Set",
       "type": "n8n-nodes-base.set",
       "typeVersion": 2,
       "position": [
-        520,
-        480
+        660,
+        840
       ]
     },
     {
       "parameters": {
         "command": "echo \"has no any diffrence\""
       },
-      "id": "582ad799-a88c-479e-8eab-a64ecfdb7242",
+      "id": "56fcf061-17b6-442a-908f-f138530aa5bf",
       "name": "equal",
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        980,
-        140
+        1240,
+        880
       ]
     },
     {
       "parameters": {
         "command": "echo \"has a diffrence\""
       },
-      "id": "ac03cd7a-5eb9-4060-963e-282fb3498840",
+      "id": "12730bfa-18e2-4386-85a9-9fedd6a7cccd",
       "name": "non euqal",
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        980,
+        1220,
         480
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "[\"Год/Месяц\"]",
+              "field2": "[\"Год/Месяц\"]"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "options": {}
+      },
+      "id": "71ca3d96-0e5e-4491-9928-ff2cffdf94a7",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        780,
+        640
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json[\"empty\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "053b5f95-1e3d-487d-a6ec-b7e0bd34b01f",
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json: {empty: items.length == 1 && Object.keys(items[0].json).length == 0}}];"
+      },
+      "id": "231052d8-dc60-44cc-93d2-5da334f55be7",
+      "name": "IF Is Empty?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        680
       ]
     }
   ],
@@ -251,7 +278,7 @@
       "main": [
         [
           {
-            "node": "Compare Datasets",
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
@@ -269,32 +296,53 @@
         ]
       ]
     },
-    "Compare Datasets": {
+    "Set": {
       "main": [
-        [],
         [
           {
-            "node": "equal",
+            "node": "Merge",
             "type": "main",
-            "index": 0
+            "index": 1
           }
-        ],
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
         [
           {
-            "node": "non euqal",
+            "node": "IF Is Empty?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Set": {
+    "IF": {
       "main": [
         [
           {
-            "node": "Compare Datasets",
+            "node": "non euqal",
             "type": "main",
-            "index": 1
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "equal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Is Empty?": {
+      "main": [
+        [
+          {
+            "node": "IF",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -304,10 +352,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "bb55af8a-a394-4fb6-89aa-7dac02701ba8",
-  "id": "aIIxakjkzSy8M3iT",
+  "versionId": "37822b06-65f9-413e-93a1-5604a2f22186",
+  "id": "P4iKnRcMpIeZv7b5",
   "meta": {
-    "instanceId": "06e9c414e7601619cfb28dd055eb2a5583a195838e650d2783b81d5c080a9165"
+    "instanceId": "33cd0335d3d00232e799a1e1a54c332eb04ded035fe081d0a3b524fa011897d1"
   },
   "tags": []
 }
